@@ -31,9 +31,12 @@ jobs:
       - name: Install step
         run: "npm i"
 
+      - name: Build step
+        run: "./"
+
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "atharvanark-photography-80"
-          entrypoint: "node server"
+          entrypoint: "server.js"
           root: "./"
