@@ -1,0 +1,43 @@
+def min_candy_destroy(candies):
+    N = len(candies)
+    dp = [[False] * N for _ in range(N)]
+    
+    # Every single candy is a palindrome by itself
+    for i in range(N):
+        dp[i][i] = True
+    
+    # Check for palindromic substrings of length 2
+    for i in range(N - 1):
+        if candies[i] == candies[i + 1]:
+            dp[i][i + 1] = True
+    
+    # Check for palindromic substrings of length greater than 2
+    for length in range(3, N + 1):
+        for i in range(N - length + 1):
+            j = i + length - 1
+            if candies[i] == candies[j] and dp[i + 1][j - 1]:
+                dp[i][j] = True
+    
+    # min_steps[i] represents the minimum steps required to remove candies from index 0 to i
+    min_steps = [float('inf')] * N
+    
+    for i in range(N):
+        if dp[0][i]:
+            min_steps[i] = 1
+        else:
+            for j in range(i):
+                if dp[j + 1][i]:
+                    min_steps[i] = min(min_steps[i], min_steps[j] + 1)
+    
+    return min_steps[N - 1]
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+N = int(data[0])
+candies = list(map(int, data[1:]))
+
+# Get the minimum number of seconds to destroy all candies
+result = min_candy_destroy(candies)
+print(result)
