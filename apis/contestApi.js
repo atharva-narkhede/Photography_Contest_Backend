@@ -1,13 +1,20 @@
+const { validationResult } = require('express-validator');
 const Contest = require('../models/Contest');
 
 // Create a new contest
 const createContest = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const contest = new Contest({
         title: req.body.title,
         description: req.body.description,
         start_date: req.body.start_date,
         end_date: req.body.end_date
     });
+
     try {
         const savedContest = await contest.save();
         console.log('Contest created');
@@ -31,12 +38,18 @@ const getAllContests = async (req, res) => {
 
 // Update a contest by title
 const updateContestByTitle = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const contestTitle = req.body.title;
     const contestUpdate = {
         description: req.body.description,
         start_date: req.body.start_date,
         end_date: req.body.end_date
     };
+
     try {
         const updatedContest = await Contest.updateOne(
             { title: contestTitle },
@@ -57,6 +70,7 @@ const updateContestByTitle = async (req, res) => {
 // Delete a contest by title
 const deleteContestByTitle = async (req, res) => {
     const contestTitle = req.body.title;
+
     try {
         const deletedContest = await Contest.deleteOne({ title: contestTitle });
         if (deletedContest.deletedCount > 0) {

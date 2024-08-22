@@ -1,7 +1,12 @@
 const Admin = require('../models/Admin');
 
-// Create a new admin
+const { validationResult } = require('express-validator');
+
 const createAdmin = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
     const admin = new Admin({
         username: req.body.username,
         email: req.body.email,

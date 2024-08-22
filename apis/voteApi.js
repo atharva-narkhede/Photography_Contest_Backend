@@ -1,8 +1,15 @@
+const { validationResult } = require('express-validator');
 const Vote = require('../models/Vote');
 
 // Create a new vote
 const createVote = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const { photo_url, voted_by, contest_title } = req.body;
+
     try {
         const vote = new Vote({ photo_url, voted_by, contest_title });
         const savedVote = await vote.save();
@@ -28,11 +35,17 @@ const getAllVotes = async (req, res) => {
 
 // Update a vote
 const updateVote = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const { voted_by, photo_url, contest_title } = req.body;
+
     try {
         const updatedVote = await Vote.findOneAndUpdate(
-            { voted_by: voted_by },
-            { photo_url: photo_url, contest_title: contest_title },
+            { voted_by },
+            { photo_url, contest_title },
             { new: true }
         );
         if (updatedVote) {
@@ -51,8 +64,9 @@ const updateVote = async (req, res) => {
 // Delete a vote
 const deleteVote = async (req, res) => {
     const { contest_title } = req.body;
+
     try {
-        const deletedVotes = await Vote.deleteMany({ contest_title: contest_title });
+        const deletedVotes = await Vote.deleteMany({ contest_title });
         if (deletedVotes.deletedCount > 0) {
             console.log(`${deletedVotes.deletedCount} votes deleted for contest title: ${contest_title}`);
             res.json({ delete: 'success', deletedCount: deletedVotes.deletedCount });
@@ -66,15 +80,17 @@ const deleteVote = async (req, res) => {
     }
 };
 
+// Delete votes by photo URL
 const deleteVoteForImage = async (req, res) => {
-    const { photo_url } = req.body; // Assuming 'image_url' is the field representing the image URL
+    const { photo_url } = req.body;
+
     try {
-        const deletedVotes = await Vote.deleteMany({ photo_url: photo_url });
+        const deletedVotes = await Vote.deleteMany({ photo_url });
         if (deletedVotes.deletedCount > 0) {
-            console.log(`${deletedVotes.deletedCount} votes deleted for image URL: ${image_url}`);
+            console.log(`${deletedVotes.deletedCount} votes deleted for image URL: ${photo_url}`);
             res.json({ delete: 'success', deletedCount: deletedVotes.deletedCount });
         } else {
-            console.log('No votes found for image URL:', image_url);
+            console.log('No votes found for image URL:', photo_url);
             res.status(404).json({ delete: 'Record Not Found' });
         }
     } catch (error) {
@@ -82,8 +98,6 @@ const deleteVoteForImage = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-
-
 
 module.exports = {
     createVote,
