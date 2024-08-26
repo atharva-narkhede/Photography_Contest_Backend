@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const morgan = require('morgan');
-
+const connectDB = require('./utils/db');
 dotenv.config(); // Load environment variables from .env file
 
 // Import custom middleware
@@ -14,8 +14,15 @@ const apiKeyMiddleware = require('./middleware/apikeymiddleware');
 
 const app = express();
 
+// CORS configuration
+const corsOptions = {
+    origin: process.env.FRONTEND_URL, // Update this to match your frontend's URL
+    credentials: true, // This allows the browser to send cookies with the requests
+};
+app.use(cors(corsOptions));
+
+
 // Middleware
-app.use(cors()); // Enable CORS
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookies
@@ -26,14 +33,7 @@ app.use(morgan('common')); // Logging HTTP requests
 app.use(apiKeyMiddleware);
 
 // Connect to MongoDB
-const mongoUri = process.env.MONGO_URI;
-mongoose.connect(mongoUri, { dbName: "photography", useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        console.log('MongoDB Connection Successful');
-    })
-    .catch(err => {
-        console.log('MongoDB Connection failed', err);
-    });
+connectDB();
 
 // Import routes
 const contestRoutes = require('./routes/contestRoutes');
