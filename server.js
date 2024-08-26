@@ -10,7 +10,7 @@ dotenv.config(); // Load environment variables from .env file
 
 // Import custom middleware
 const { errorHandler } = require('./middleware/errorMiddleware');
-const apiKeyMiddleware = require('./middleware/apikeymiddleware');
+const apiKeyMiddleware = require('./middleware/apiKeyMiddleware');
 
 const app = express();
 
