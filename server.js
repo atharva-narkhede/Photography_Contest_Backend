@@ -29,8 +29,6 @@ app.use(cookieParser()); // Parse cookies
 app.use(helmet()); // Set security-related HTTP headers
 app.use(morgan('common')); // Logging HTTP requests
 
-// Apply API Key Middleware globally (if needed for all routes)
-app.use(apiKeyMiddleware);
 
 // Connect to MongoDB
 connectDB();
