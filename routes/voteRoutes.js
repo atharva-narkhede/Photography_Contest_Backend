@@ -13,7 +13,7 @@ const {
   validateVoteDelete,
   validateDeleteVotesByPhotoURL
 } = require('../middleware/validators');
-const apiKeyMiddleware = require('../middleware/apikeymiddleware'); // Correctly import
+const apiKeyMiddleware = require('../middleware/apiKeyMiddleware'); // Correctly import
 
 // Apply API key middleware globally to all vote routes
 router.use(apiKeyMiddleware);

@@ -13,7 +13,7 @@ const {
   validatePhotoDelete,
   validateDeletePhotosByContestTitle
 } = require('../middleware/validators');
-const apiKeyMiddleware = require('../middleware/apikeymiddleware'); // Correctly import
+const apiKeyMiddleware = require('../middleware/apiKeyMiddleware'); // Correctly import
 
 // Apply API key middleware globally to all photo routes
 router.use(apiKeyMiddleware); // Correctly use middleware

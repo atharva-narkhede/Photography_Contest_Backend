@@ -11,7 +11,7 @@ const {
 } = require('../apis/userApi');
 const { protect } = require('../middleware/authMiddleware');
 const { validateRegister, validateLogin, validateForgotPassword, validateResetPassword, validateUpdateProfile } = require('../middleware/validators');
-const apiKeyMiddleware = require('../middleware/apikeymiddleware');
+const apiKeyMiddleware = require('../middleware/apiKeyMiddleware');
 
 const router = express.Router();
 

@@ -10,7 +10,7 @@ const {
   validateContestCreate,
   validateContestUpdate
 } = require('../middleware/validators');
-const apiKeyMiddleware = require('../middleware/apikeymiddleware');
+const apiKeyMiddleware = require('../middleware/apiKeyMiddleware');
 
 // Apply API key middleware globally to all contest routes
 router.use(apiKeyMiddleware);
