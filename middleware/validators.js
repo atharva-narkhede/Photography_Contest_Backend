@@ -56,29 +56,49 @@ const validateContestUpdate = [
 ];
 
 // Photo Validators
+// Photo Validators
 const validatePhotoCreate = [
   check('contest_title', 'Contest title is required').not().isEmpty(),
   check('uploaded_by', 'Uploaded by is required').not().isEmpty(),
-  check('photo_url', 'Photo URL is required').isURL(),
+  check('email', 'Email is required').isEmail().withMessage('Please provide a valid email'),
+  check('photo_url', 'Photo URL is required').isURL().withMessage('Photo URL must be a valid URL'),
 ];
 
 const validatePhotoUpdate = [
-  check('contest_title', 'Contest title is required').optional().not().isEmpty(),
-  check('uploaded_by', 'Uploaded by is required').optional().not().isEmpty(),
-  check('photo_url', 'Photo URL is required').optional().isURL(),
+  check('contest_title', 'Contest title is required').not().isEmpty(),
+  check('email', 'Email is required').isEmail().withMessage('Please provide a valid email'),
+  check('photo_url', 'Photo URL is required').isURL().withMessage('Photo URL must be a valid URL'),
+];
+
+const validatePhotoDelete = [
+  check('contest_title', 'Contest title is required').not().isEmpty(),
+  check('email', 'Email is required').isEmail().withMessage('Please provide a valid email'),
+];
+
+const validateDeletePhotosByContestTitle = [
+  check('contest_title', 'Contest title is required').not().isEmpty(),
 ];
 
 // Vote Validators
 const validateVoteCreate = [
-  check('photo_url', 'Photo URL is required').isURL(),
-  check('voted_by', 'Voted by is required').not().isEmpty(),
+  check('photo_url', 'Photo URL is required').isURL().withMessage('Photo URL must be a valid URL'),
+  check('email', 'Email is required').isEmail().withMessage('Please provide a valid email'),
   check('contest_title', 'Contest title is required').not().isEmpty(),
 ];
 
 const validateVoteUpdate = [
-  check('photo_url', 'Photo URL is required').optional().isURL(),
-  check('voted_by', 'Voted by is required').optional().not().isEmpty(),
-  check('contest_title', 'Contest title is required').optional().not().isEmpty(),
+  check('photo_url', 'Photo URL is required').isURL().withMessage('Photo URL must be a valid URL'),
+  check('email', 'Email is required').isEmail().withMessage('Please provide a valid email'),
+  check('contest_title', 'Contest title is required').not().isEmpty(),
+];
+
+const validateVoteDelete = [
+  check('email', 'Email is required').isEmail().withMessage('Please provide a valid email'),
+  check('contest_title', 'Contest title is required').not().isEmpty(),
+];
+
+const validateDeleteVotesByPhotoURL = [
+  check('photo_url', 'Photo URL is required').isURL().withMessage('Photo URL must be a valid URL'),
 ];
 
 module.exports = {
@@ -93,6 +113,10 @@ module.exports = {
   validateContestUpdate,
   validatePhotoCreate,
   validatePhotoUpdate,
+  validatePhotoDelete,
+  validateDeletePhotosByContestTitle,
   validateVoteCreate,
   validateVoteUpdate,
+  validateVoteDelete,
+  validateDeleteVotesByPhotoURL,
 };

@@ -8,6 +8,8 @@ const createContest = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
+    console.log('Request body:', req.body); // Debugging log
+
     const contest = new Contest({
         title: req.body.title,
         description: req.body.description,
@@ -17,10 +19,11 @@ const createContest = async (req, res) => {
 
     try {
         const savedContest = await contest.save();
-        console.log('Contest created');
-        res.send(savedContest);
+        console.log('Contest created:', savedContest);
+        res.status(201).send(savedContest);
     } catch (error) {
-        res.status(400).send(error);
+        console.error('Error creating contest:', error);
+        res.status(500).send(error);
     }
 };
 
@@ -29,10 +32,10 @@ const getAllContests = async (req, res) => {
     try {
         const contests = await Contest.find();
         console.log('Data sent');
-        res.json(contests);
+        res.status(200).json(contests);
     } catch (error) {
-        console.log('Fetch error :- ', error);
-        res.json({ 'message': error });
+        console.error('Fetch error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -42,6 +45,8 @@ const updateContestByTitle = async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+
+    console.log('Request body:', req.body); // Debugging log
 
     const contestTitle = req.body.title;
     const contestUpdate = {
@@ -57,13 +62,14 @@ const updateContestByTitle = async (req, res) => {
         );
         if (updatedContest.modifiedCount > 0) {
             console.log('Contest Updated', updatedContest);
-            res.send({ 'update': 'success', updatedContest });
+            res.status(200).json({ update: 'success', updatedContest });
         } else {
             console.log('Contest not updated');
-            res.send({ 'update': 'Record Not Found' });
+            res.status(404).json({ update: 'Record Not Found' });
         }
     } catch (error) {
-        res.status(400).send(error);
+        console.error('Update error:', error);
+        res.status(500).send(error);
     }
 };
 
@@ -75,13 +81,14 @@ const deleteContestByTitle = async (req, res) => {
         const deletedContest = await Contest.deleteOne({ title: contestTitle });
         if (deletedContest.deletedCount > 0) {
             console.log('Contest Deleted');
-            res.send({ 'delete': 'success' });
+            res.status(200).json({ delete: 'success' });
         } else {
             console.log('Contest Not deleted');
-            res.send({ 'delete': 'Record Not Found' });
+            res.status(404).json({ delete: 'Record Not Found' });
         }
     } catch (error) {
-        res.status(400).send(error);
+        console.error('Delete error:', error);
+        res.status(500).send(error);
     }
 };
 

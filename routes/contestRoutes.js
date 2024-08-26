@@ -6,15 +6,19 @@ const {
   updateContestByTitle,
   deleteContestByTitle
 } = require('../apis/contestApi');
-const apiKeyMiddleware = require('../middleware/apikeymiddleware'); // Correctly import
+const {
+  validateContestCreate,
+  validateContestUpdate
+} = require('../middleware/validators');
+const apiKeyMiddleware = require('../middleware/apikeymiddleware');
 
 // Apply API key middleware globally to all contest routes
-router.use(apiKeyMiddleware); // Correctly use middleware
+router.use(apiKeyMiddleware);
 
 // Contest Routes
 router.get('/fetch', getAllContests);
-router.post('/insert', createContest);
-router.put('/update', updateContestByTitle);
+router.post('/insert', validateContestCreate, createContest);
+router.put('/update', validateContestUpdate, updateContestByTitle);
 router.delete('/delete', deleteContestByTitle);
 
 module.exports = router;

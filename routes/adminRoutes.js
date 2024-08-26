@@ -1,20 +1,31 @@
 const express = require('express');
-const router = express.Router();
 const {
-  createAdmin,
-  getAdmins,
-  updateAdmin,
-  deleteAdmin
+  registerAdmin,
+  authAdmin,
+  logoutAdmin,
+  getAdminProfile,
+  updateAdminProfile,
+  forgotPassword,
+  resetPassword,
+  validateToken
 } = require('../apis/adminApi');
-const apiKeyMiddleware = require('../middleware/apikeymiddleware'); // Correctly import
+const { protect } = require('../middleware/authMiddleware');
+const { validateRegister, validateLogin, validateForgotPassword, validateResetPassword, validateUpdateProfile } = require('../middleware/validators');
+const apiKeyMiddleware = require('../middleware/apikeymiddleware');
 
-// Apply API key middleware globally to all admin routes
-router.use(apiKeyMiddleware); // Correctly use middleware
+const router = express.Router();
 
-// Admin Routes
-router.get('/fetch', getAdmins);
-router.post('/insert', createAdmin);
-router.put('/update', updateAdmin);
-router.delete('/delete', deleteAdmin);
+router.use(apiKeyMiddleware); // Apply API key middleware to all admin routes
+
+// Admin Authentication and Profile Routes
+router.post('/register', validateRegister, registerAdmin);
+router.post('/login', validateLogin, authAdmin);
+router.post('/logout', protect, logoutAdmin);
+router.get('/validateToken', validateToken); // Route for token validation
+router.route('/profile').get(protect, getAdminProfile).put(protect, validateUpdateProfile, updateAdminProfile);
+
+// Admin Password Management Routes
+router.post('/forgotpassword', validateForgotPassword, forgotPassword);
+router.put('/resetpassword', validateResetPassword, resetPassword);
 
 module.exports = router;

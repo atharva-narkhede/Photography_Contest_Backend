@@ -8,18 +8,24 @@ const createVote = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { photo_url, voted_by, contest_title } = req.body;
+    const { photo_url, email, contest_title } = req.body;
 
     try {
-        const vote = new Vote({ photo_url, voted_by, contest_title });
+        const existingVote = await Vote.findOne({ email, contest_title });
+        if (existingVote) {
+            return res.status(400).json({ error: "You have already voted in this contest using this email." });
+        }
+
+        const vote = new Vote({ photo_url, email, contest_title });
         const savedVote = await vote.save();
         console.log('Vote created:', savedVote);
         res.status(201).json(savedVote);
     } catch (error) {
         console.error('Create vote error:', error);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
+
 
 // Get all votes
 const getAllVotes = async (req, res) => {
@@ -40,12 +46,12 @@ const updateVote = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { voted_by, photo_url, contest_title } = req.body;
+    const { email, photo_url, contest_title } = req.body;
 
     try {
         const updatedVote = await Vote.findOneAndUpdate(
-            { voted_by },
-            { photo_url, contest_title },
+            { email, contest_title },
+            { photo_url },
             { new: true }
         );
         if (updatedVote) {
@@ -57,28 +63,30 @@ const updateVote = async (req, res) => {
         }
     } catch (error) {
         console.error('Update vote error:', error);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
+
 // Delete a vote
 const deleteVote = async (req, res) => {
-    const { contest_title } = req.body;
+    const { email, contest_title } = req.body;
 
     try {
-        const deletedVotes = await Vote.deleteMany({ contest_title });
-        if (deletedVotes.deletedCount > 0) {
-            console.log(`${deletedVotes.deletedCount} votes deleted for contest title: ${contest_title}`);
-            res.json({ delete: 'success', deletedCount: deletedVotes.deletedCount });
+        const deletedVote = await Vote.findOneAndDelete({ email, contest_title });
+        if (deletedVote) {
+            console.log('Vote deleted:', deletedVote);
+            res.status(200).json({ delete: 'success' });
         } else {
-            console.log('No votes found for contest title:', contest_title);
+            console.log('No votes found for this email and contest title');
             res.status(404).json({ delete: 'Record Not Found' });
         }
     } catch (error) {
         console.error('Delete vote error:', error);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
+
 
 // Delete votes by photo URL
 const deleteVoteForImage = async (req, res) => {
@@ -88,16 +96,17 @@ const deleteVoteForImage = async (req, res) => {
         const deletedVotes = await Vote.deleteMany({ photo_url });
         if (deletedVotes.deletedCount > 0) {
             console.log(`${deletedVotes.deletedCount} votes deleted for image URL: ${photo_url}`);
-            res.json({ delete: 'success', deletedCount: deletedVotes.deletedCount });
+            res.status(200).json({ delete: 'success', deletedCount: deletedVotes.deletedCount });
         } else {
             console.log('No votes found for image URL:', photo_url);
             res.status(404).json({ delete: 'Record Not Found' });
         }
     } catch (error) {
         console.error('Delete vote error:', error);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
+
 
 module.exports = {
     createVote,
