@@ -119,6 +119,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [your-email@example.com](mailto:your-email@example.com)
+Your Name - [Atharva Narkhede](mailto:atharvan12345@gmail.com)
 
 Project Link: [https://github.com/your-username/photography-contest-backend](https://github.com/your-username/photography-contest-backend)
